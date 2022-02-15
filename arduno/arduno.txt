@@ -1,0 +1,109 @@
+//#include <Ticker.h>
+//Ticker Raj_Tick; // Name your ticker
+#include <ESP8266WiFi.h>
+#include <FirebaseArduino.h>
+ 
+//#include "DHT.h"
+//#define DHTPIN D2     // what digital pin we're connected to
+//#define DHTTYPE DHT11 
+// Set these to run example.
+#define FIREBASE_HOST "bitsphere-office-automation-default-rtdb.firebaseio.com"
+#define FIREBASE_AUTH "ZLfzonTn3HqQMXji2d48ZAFxK1EDlmX4S9wrXVMO"
+#define WIFI_SSID "Airtel_8252223457"
+#define WIFI_PASSWORD "air35224"
+//DHT dht(DHTPIN, DHTTYPE);
+
+//volatile int WatchDogCount = 0;
+//
+//void ISRWatchDog(){
+//  WatchDogCount++;
+//  Serial.print("ISRWatchDog function executed...>>"); 
+//  Serial.printf("Counter's value increased to ");
+//  Serial.println(WatchDogCount); 
+//}
+
+
+void setup() {
+  Serial.begin(115200);
+ // Raj_Tick.attach(1,ISRWatchDog); // 1st argument is in seconds after which the ISRwatchdog() executes  
+  pinMode(D1,OUTPUT);
+pinMode(D7,OUTPUT);
+pinMode(D3,OUTPUT);
+pinMode(D6,OUTPUT);
+
+
+    // dht.begin();
+ // connect to wifi.
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  Serial.print("connecting");
+
+  if(WiFi.status() != WL_CONNECTED){
+    Serial.print("not connceted");
+  }else{
+       Serial.print(" connceted");
+  }
+  while (WiFi.status() != WL_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+  }
+
+  Serial.println();
+  Serial.print("connected: ");
+  Serial.println(WiFi.localIP());
+    
+  
+  Firebase.begin(FIREBASE_HOST,FIREBASE_AUTH);
+  Firebase.setString("meeting1","0");
+  Firebase.setString("meeting2","0");
+  Firebase.setString("meeting3","0");
+  Firebase.setString("meeting4","0");
+
+}
+
+void loop() {
+  
+ if(Firebase.getString("meeting1")=="1"){
+      digitalWrite(D1,HIGH);
+      Serial.println("on");
+  }else{
+     digitalWrite(D1,LOW);
+     Serial.println("off");
+  }
+
+  if(Firebase.getString("meeting2")=="1"){
+    digitalWrite(D7,HIGH);
+  }else{
+     digitalWrite(D7,LOW);
+  }
+  if(Firebase.getString("meeting3")=="1"){
+    digitalWrite(D3,HIGH);
+  }else{
+     digitalWrite(D3,LOW);
+  }
+  if(Firebase.getString("meeting4")=="1"){
+    digitalWrite(D6,HIGH);
+  }else{
+     digitalWrite(D6,LOW);
+  }
+
+//    float h = dht.readHumidity();
+//  // Read temperature as Celsius (the default)
+//  float t = dht.readTemperature();
+//  // Read temperature as Fahrenheit (isFahrenheit = true)
+//  float f = dht.readTemperature(true);
+//  // Check if any reads failed and exit early (to try again).
+//  if (isnan(h) || isnan(t) || isnan(f)) {
+//    Serial.println("Failed to read from DHT sensor!");
+//    return;
+//  }
+//  Firebase.setFloat("waitingtemprature",t);
+//   Serial.println(t);
+
+
+ delay(1000);
+ if(WiFi.status() != WL_CONNECTED){
+    Serial.print("not connceted");
+  }else{
+       Serial.print(" connceted");
+  }
+}
